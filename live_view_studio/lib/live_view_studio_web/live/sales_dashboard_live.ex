@@ -76,6 +76,12 @@ defmodule LiveViewStudioWeb.SalesDashboardLive do
     {:noreply, socket}
   end
 
+  def handle_event("select-refresh", %{"refresh" => refresh}, socket) do
+    refresh = String.to_integer(refresh)
+    socket = assign(socket, refresh: refresh)
+    {:noreply, socket}
+  end
+
   def handle_info(:tick, socket) do
     socket =
       socket
@@ -84,12 +90,6 @@ defmodule LiveViewStudioWeb.SalesDashboardLive do
 
     schedule_refresh(socket)
 
-    {:noreply, socket}
-  end
-
-  def handle_event("select-refresh", %{"refresh" => refresh}, socket) do
-    refresh = String.to_integer(refresh)
-    socket = assign(socket, refresh: refresh)
     {:noreply, socket}
   end
 
