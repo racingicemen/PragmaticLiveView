@@ -86,11 +86,13 @@ defmodule LiveViewStudioWeb.SearchLive do
           socket
           |> put_flash(:info, "No stores matching \"#{zip}\"")
           |> assign(stores: [], loading: false)
-
         {:noreply, socket}
 
       stores ->
-        socket = assign(socket, stores: stores, loading: false)
+        socket =
+          socket
+          |> clear_flash()
+          |> assign(stores: stores, loading: false)
         {:noreply, socket}
     end
   end
