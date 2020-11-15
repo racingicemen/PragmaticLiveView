@@ -22,13 +22,15 @@ defmodule LiveViewStudioWeb.ServersLive do
       <div class="sidebar">
         <nav>
           <%= for server <- @servers do %>
-            <a href="#"
-                phx-click="show"
-                phx-value-id="<%= server.id %>"
-                class="<%= if server == @selected_server, do: 'active' %>">
-              <img src="/images/server/svg">
-              <%= server.name %>
-            </a>
+            <div>
+              <%= live_patch server.name,
+                  to: Routes.live_path(
+                      @socket,
+                      __MODULE__,
+                      id: server.id
+                    ),
+                  class: if server == @selected_server, do: "active"%>
+            </div>
           <% end %>
         </nav>
       </div>
@@ -75,18 +77,15 @@ defmodule LiveViewStudioWeb.ServersLive do
     """
   end
 
-  def handle_event("show", %{"id" => id}, socket) do
+  def handle_params(%{"id" => id}, _url, socket) do
     id = String.to_integer(id)
-
     server = Servers.get_server!(id)
 
     socket =
       assign(socket,
         selected_server: server
       )
-
     {:noreply, socket}
-
   end
 
 end
