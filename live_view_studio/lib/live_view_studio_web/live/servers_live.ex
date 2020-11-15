@@ -15,6 +15,22 @@ defmodule LiveViewStudioWeb.ServersLive do
       {:ok, socket}
   end
 
+  def handle_params(%{"id" => id}, _url, socket) do
+    id = String.to_integer(id)
+    server = Servers.get_server!(id)
+
+    socket =
+      assign(socket,
+        selected_server: server,
+        page_title: "What's up #{server.name}?"
+      )
+    {:noreply, socket}
+  end
+
+  def handle_params(_params, _url, socket) do
+    {:noreply, socket}
+  end
+
   def render(assigns) do
     ~L"""
     <h1>Servers</h1>
@@ -23,7 +39,7 @@ defmodule LiveViewStudioWeb.ServersLive do
         <nav>
           <%= for server <- @servers do %>
             <div>
-              <%= live_patch server.name,
+              <%= live_patch link_body(server),
                   to: Routes.live_path(
                       @socket,
                       __MODULE__,
@@ -77,15 +93,11 @@ defmodule LiveViewStudioWeb.ServersLive do
     """
   end
 
-  def handle_params(%{"id" => id}, _url, socket) do
-    id = String.to_integer(id)
-    server = Servers.get_server!(id)
-
-    socket =
-      assign(socket,
-        selected_server: server
-      )
-    {:noreply, socket}
+  defp link_body(server) do
+    assigns = %{name: server.name}
+    ~L"""
+    <img src="/images/server.svg">
+    <%= @name %>
+    """
   end
-
 end
