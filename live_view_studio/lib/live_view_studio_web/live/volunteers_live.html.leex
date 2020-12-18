@@ -1,7 +1,8 @@
 <h1>Volunteer Check-In</h1>
 <div id="checkin">
   <%= f = form_for @changeset, "#",
-            phx_submit: "save"  %>
+            phx_submit: "save",
+            phx_change: "validate"  %>
 
     <div class="field">
       <%= text_input f, :name,
