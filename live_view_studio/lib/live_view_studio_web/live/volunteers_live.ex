@@ -5,6 +5,8 @@ defmodule LiveViewStudioWeb.VolunteersLive do
   alias LiveViewStudio.Volunteers.Volunteer
 
   def mount(_params, _session, socket) do
+    if connected?(socket), do: Volunteers.subscribe()
+
     volunteers = Volunteers.list_volunteers()
 
     changeset = Volunteers.change_volunteer(%Volunteer{})
@@ -25,19 +27,10 @@ defmodule LiveViewStudioWeb.VolunteersLive do
   # defmodule LiveViewStudio.Volunteers.Volumteer would require %{"volumteer" => params}
   def handle_event("save", %{"volunteer" => params}, socket) do
     case Volunteers.create_volunteer(params) do
-      {:ok, volunteer} ->
-        socket =
-          update(
-            socket,
-            :volunteers,
-            fn volunteers -> [volunteer | volunteers] end
-          )
-
+      {:ok, _volunteer} ->
         changeset = Volunteers.change_volunteer(%Volunteer{})
 
         socket = assign(socket, changeset: changeset)
-
-        :timer.sleep(500)
 
         {:noreply, socket}
 
@@ -70,15 +63,29 @@ defmodule LiveViewStudioWeb.VolunteersLive do
         %{checked_out: !volunteer.checked_out}
       )
 
-    volunteers = Volunteers.list_volunteers()
+    {:noreply, socket}
+  end
 
+  def handle_info({:volunteer_created, volunteer}, socket) do
     socket =
-      assign(socket,
-        volunteers: volunteers
+      update(
+        socket,
+        :volunteers,
+        fn volunteers -> [volunteer | volunteers] end
       )
-
-    :timer.sleep(500)
 
     {:noreply, socket}
   end
+
+  def handle_info({:volunteer_updated, volunteer}, socket) do
+    socket =
+      update(
+        socket,
+        :volunteers,
+        fn volunteers -> [volunteer | volunteers] end
+      )
+
+    {:noreply, socket}
+  end
+
 end
