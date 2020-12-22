@@ -37,11 +37,14 @@ defmodule LiveViewStudioWeb.InfiniteScrollLive do
       <% end %>
       </div>
 
-      <div id="footer">
-        <button phx-click="load-more"
-                phx-disable-with="loading...">
-          Load More
-        </button>
+      <!-- data-foo-bar means this.el.dataset.fooBar in app.js update() callback -->
+      <!-- data-page-num means this.el.dataset.pageNum in app.js update() callback -->
+      <div id="footer"
+        phx-hook="InfiniteScroll"
+        data-foo-bar="<%= @page %>">
+        <div class="loader">
+          Loading More...
+        </div>
       </div>
     </div>
     """
